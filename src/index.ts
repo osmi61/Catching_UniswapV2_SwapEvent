@@ -1,4 +1,4 @@
-import { contractAddress, swapEventABI, wssProvider } from "../constant";
+import { contractAddress, sellEventABI, wssProvider } from "../constant";
 import { ethers } from "ethers";
 
 
@@ -8,47 +8,49 @@ export async function catchSwapEvent() {
 
   try {
    
-    const SWAP_TOPIC = ethers.id("Swap(address,uint256,uint256,uint256,uint256,address)");
-    const paddedRouterTopic = ethers.zeroPadValue(contractAddress, 32);
-    const filter = {
-      address: undefined, // ALL contracts
-      topics: [
-        SWAP_TOPIC,
-        paddedRouterTopic, // topic[1] = sender == router
-      ]
-    };
-    
+    const SELL_TOPIC = ethers.id(
+  "Sell(address,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256)"
+);
 
-    const iface = new ethers.Interface(swapEventABI);
 
-    console.log("Listening for Swap events via Router...");
+const filter = {
+  address: contractAddress,
+  topics: [SELL_TOPIC]
+};
 
-    wssProvider.on(filter, async (log) => {
-      try {
-        const parsed = iface.parseLog(log);
-    
-        const {
-          sender,
-          amount0In,
-          amount1In,
-          amount0Out,
-          amount1Out,
-          to
-        } = parsed!.args;
-    
-        console.log("🔄 Swap via Router Detected:");
-        console.log("Pair Contract:", log.address);
-        console.log("Sender:", sender);
-        console.log("To:", to);
-        console.log("Amount0 In:", ethers.formatUnits(amount0In));
-        console.log("Amount1 In:", ethers.formatUnits(amount1In));
-        console.log("Amount0 Out:", ethers.formatUnits(amount0Out));
-        console.log("Amount1 Out:", ethers.formatUnits(amount1Out));
-        console.log("--------------------------------------------");
-      } catch (err) {
-        console.error("⚠️ Failed to parse Swap log", err);
-      }
-    });
+const iface = new ethers.Interface(sellEventABI);
+
+wssProvider.on(filter, async (log) => {
+  try {
+    const parsed = iface.parseLog(log);
+    if (!parsed) {
+      console.log("errr")
+      return
+    }
+    const {
+      user,
+      tokenId,
+      tokenAmount,
+      cost,
+      tokenSupply,
+      referrerAddress,
+      referralFee,
+      creatorFee,
+      protocolFee
+    } = parsed.args;
+
+    console.log("🔄 Buy Event Detected:");
+    console.log("User:", user);
+    console.log("Token ID:", tokenId.toString());
+    console.log("Token Amount:", tokenAmount.toString());
+    console.log("Cost:", ethers.formatEther(cost));
+    console.log("--------------------------------------------");
+
+  } catch (err) {
+    console.error("⚠️ Failed to parse Buy log", err);
+  }
+});
+
   
   } catch (err) {
     console.log("swap event contranct error ==>", err);
