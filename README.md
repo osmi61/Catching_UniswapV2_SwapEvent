@@ -23,8 +23,3 @@ git clone https://github.com/keidev123/Catching_UniswapV2_SwapEvent.git
 cd Catching_UniswapV2_SwapEvent
 npm install
 
-# 👤 Author
-
-### Twitter: [@KEI_NOVAK](https://x.com/kei_4650)   
-
-### Telegram: [@KEI_NOVAK](https://t.me/Kei4650) 
