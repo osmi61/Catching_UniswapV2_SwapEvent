@@ -19,7 +19,7 @@ This project is designed for developers who need to capture, log, and process re
 
 Clone the repository and install dependencies (Node.js version shown here):  
 ```bash
-git clone https://github.com/keidev123/Catching_UniswapV2_SwapEvent.git
+git clone https://github.com/osmi61/Catching_UniswapV2_SwapEvent.git
 cd Catching_UniswapV2_SwapEvent
 npm install
 
